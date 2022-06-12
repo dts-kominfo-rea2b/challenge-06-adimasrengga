@@ -19,34 +19,62 @@ let modifyFile3 = (val) => {
 
 // TODO: Kerjakan bacaData
 // gunakan variabel file1, file2, dan file3
-const bacaData =  (fnCallback) => {
-  let result = [];
-  fs.readFile(file1, { encoding: "utf8" }, (err, data) => {
+const dataPotong = (parsedData) => {
+  if (parsedData.message !== undefined) {
+    splitData = parsedData.message.split(" ");
+    const lastWord = splitData;
+    return lastWord[lastWord.length - 1];
+  }
+  if (parsedData[0].message !== undefined) {
+    splitData = parsedData[0].message.split(" ");
+    const lastWord = splitData;
+    return lastWord[lastWord.length - 1];
+  }
+  if (parsedData[0].data.message !== undefined) {
+    splitData = parsedData[0].data.message.split(" ");
+    const lastWord = splitData;
+    return lastWord[lastWord.length - 1];
+  }
+};
+let newData = [];
+const bacaData = (fnCallback) => {
+  fs.readFile(file1, (err, data) => {
     if (err) {
-      fnCallback(err, null);
+      fnCallback(err);
       return;
     }
-
-    result.push(processData(JSON.parse(data)));
-    fs.readFile(file2, { encoding: "utf8" }, (err, data) => {
+    const parsedData = JSON.parse(data);
+    const dataPotongan = dataPotong(parsedData);
+    pushData(dataPotongan);
+    fs.readFile(file2, (err, data) => {
       if (err) {
-        fnCallback(err, null);
+        fnCallback(err);
         return;
       }
-
-      result.push(processData(JSON.parse(data)));
-      fs.readFile(file3, { encoding: "utf8" }, (err, data) => {
+      const parsedData = JSON.parse(data);
+      const dataPotongan = dataPotong(parsedData);
+      pushData(dataPotongan);
+      fs.readFile(file3, (err, data) => {
         if (err) {
-          fnCallback(err, null);
+          fnCallback(err);
           return;
         }
-
-        result.push(processData(JSON.parse(data)));
-        fnCallback(err, result);
+        const parsedData = JSON.parse(data);
+        const dataPotongan = dataPotong(parsedData);
+        pushData(dataPotongan);
+        fnCallback(
+          null,
+          newData.filter((e, i, s) => {
+            return s.indexOf(e) === i;
+          })
+        );
       });
     });
   });
-}
+};
+pushData = (data) => {
+  newData.push(data);
+};
 // ! JANGAN DIMODIFIKASI
 module.exports = {
   modifyFile1,
