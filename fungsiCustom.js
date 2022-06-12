@@ -24,9 +24,9 @@ const bacaData = (fnCallback) => {
   let index3 = "";
   let temp = [];
 
-  FileSystem.readFile(file1, 'utf-8', (err, data1) => {    
-  FileSystem.readFile(file2, 'utf-8', (err, data2) => { 
-  FileSystem.readFile(file3, 'utf-8', (err, data3) => {
+  fs.readFile(file1, 'utf-8', (err, data1) => {    
+  fs.readFile(file2, 'utf-8', (err, data2) => { 
+  fs.readFile(file3, 'utf-8', (err, data3) => {
     data = [
       index1 = JSON.parse(data1)['message'].split(" ")[1],
       index2 = JSON.parse(data2)[0]['message'].split(" ")[1],
