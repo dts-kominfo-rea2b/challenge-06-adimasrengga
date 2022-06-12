@@ -18,38 +18,62 @@ let modifyFile3 = (val) => {
 
 // TODO: Kerjakan bacaData
 // gunakan variabel file1, file2, dan file3
-const bacaData = (fnCallback) => {
-  let temp = []
-  fs.readFile(file2,'utf8', (err, data) => {
-    if (err) fnCallback(err,null);
-    temp.push(jsonType2(data))
-  fs.readFile(file1,'utf8', (err, data) => {
-    if (err) fnCallback(err,null);
-    temp.push(jsonType1(data))
-  fs.readFile(file3,'utf8', (err, data) => {
-    if (err) fnCallback(err,null);
-    temp.push(jsonType3(data))
-    
-    fnCallback(null, temp);
-  });
-  });
-});
+const dataPotong = (parsedData) => {
+  if (parsedData.message !== undefined) {
+    splitData = parsedData.message.split(" ");
+    const lastWord = splitData;
+    return lastWord[lastWord.length - 1];
+  }
+  if (parsedData[0].message !== undefined) {
+    splitData = parsedData[0].message.split(" ");
+    const lastWord = splitData;
+    return lastWord[lastWord.length - 1];
+  }
+  if (parsedData[0].data.message !== undefined) {
+    splitData = parsedData[0].data.message.split(" ");
+    const lastWord = splitData;
+    return lastWord[lastWord.length - 1];
+  }
 };
-const jsonType1 = (j) => {
-    let obj = JSON.parse(j);
-    return (obj.message.split(" ")[1]);
-}
-
-const jsonType2 = (j) => {
-  let obj = JSON.parse(j);
-  return (obj[0].message.split(" ")[1]);
-}
-
-const jsonType3 = (j) => {
-  let obj = JSON.parse(j);
-  return (obj[0].data.message.split(" ")[1]);
-}
-
+let newData = [];
+const bacaData = (fnCallback) => {
+  fs.readFile(file1, (err, data) => {
+    if (err) {
+      fnCallback(err);
+      return;
+    }
+    const parsedData = JSON.parse(data);
+    const dataPotongan = dataPotong(parsedData);
+    pushData(dataPotongan);
+    fs.readFile(file2, (err, data) => {
+      if (err) {
+        fnCallback(err);
+        return;
+      }
+      const parsedData = JSON.parse(data);
+      const dataPotongan = dataPotong(parsedData);
+      pushData(dataPotongan);
+      fs.readFile(file3, (err, data) => {
+        if (err) {
+          fnCallback(err);
+          return;
+        }
+        const parsedData = JSON.parse(data);
+        const dataPotongan = dataPotong(parsedData);
+        pushData(dataPotongan);
+        fnCallback(
+          null,
+          newData.filter((e, i, s) => {
+            return s.indexOf(e) === i;
+          })
+        );
+      });
+    });
+  });
+};
+pushData = (data) => {
+  newData.push(data);
+};
 // ! JANGAN DIMODIFIKASI
 module.exports = {
   modifyFile1,
